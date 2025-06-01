@@ -159,7 +159,7 @@ def on_submit_ticket_id(num):
             gr.update(visible=True),
             gr.update(
                 value=f"{extracted_id_message}\n获取票信息成功:\n展会名称：{project_name}\n"
-                f"开展时间：{project_start_time} - {project_end_time}\n场馆地址：{venue_name} {venue_address}",
+                      f"开展时间：{project_start_time} - {project_end_time}\n场馆地址：{venue_name} {venue_address}",
                 visible=True,
             ),
             gr.update(visible=True, value=sales_dates[0])
@@ -179,11 +179,11 @@ def extract_id_from_url(url):
 
 
 def on_submit_all(
-    ticket_id,
-    ticket_info: int,
-    people_indices,
-    people_buyer_index,
-    address_index,
+        ticket_id,
+        ticket_info: int,
+        people_indices,
+        people_buyer_index,
+        address_index,
 ):
     try:
         ticket_cur: dict[str, Any] = ticket_value[ticket_info]
@@ -218,9 +218,9 @@ def on_submit_all(
                 "tel": address_cur["phone"],
                 "addr_id": address_cur["id"],
                 "addr": address_cur["prov"]
-                + address_cur["city"]
-                + address_cur["area"]
-                + address_cur["addr"],
+                        + address_cur["city"]
+                        + address_cur["area"]
+                        + address_cur["addr"],
             },
             "cookies": main_request.cookieManager.get_cookies(),
             "phone": main_request.cookieManager.get_config_value("phone", ""),
@@ -243,7 +243,7 @@ def on_submit_all(
 def upload_file(filepath):
     gr.Info("已经注销，请选择登录信息文件", duration=5)
     try:
-        shutil.copy2(GLOBAL_COOKIE_PATH, filepath)
+        shutil.copy2(filepath, GLOBAL_COOKIE_PATH)  # 修复导入失败的bug
         set_main_request(BiliRequest(cookies_config_path=GLOBAL_COOKIE_PATH))
         name = main_request.get_request_name()
         gr.Info("导入成功", duration=5)
@@ -289,7 +289,7 @@ def setting_tab():
     with gr.Column(variant="compact"):
         with gr.Row():
             username_ui = gr.Text(
-                main_request.get_request_name(),
+                value=main_request.get_request_name,  # 修复刷新后显示未登录实际已登录的bug
                 label="账号名称",
                 interactive=False,
                 info="输入配置文件使用的账号名称",
