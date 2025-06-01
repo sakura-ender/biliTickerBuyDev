@@ -241,7 +241,6 @@ def on_submit_all(
 
 
 def upload_file(filepath):
-    gr.Info("已经注销，请选择登录信息文件", duration=5)
     try:
         shutil.copy2(filepath, GLOBAL_COOKIE_PATH)  # 修复导入失败的bug
         set_main_request(BiliRequest(cookies_config_path=GLOBAL_COOKIE_PATH))
@@ -277,6 +276,17 @@ def add():
         raise gr.Error("登录出现错误", duration=5)
 
 
+def logout():
+    try:
+        main_request.cookieManager.db.delete("cookie")
+        gr.Info("已注销登录,本地cookie已清除", duration=5)
+        return "未登录", GLOBAL_COOKIE_PATH
+    except Exception as e:
+        logger.exception(f"注销时发生错误:{e}")
+        gr.Error("注销登录失败，请手动删除cookie文件", duration=5)
+        return main_request.get_request_name(), GLOBAL_COOKIE_PATH
+
+
 def setting_tab():
     gr.Markdown("""
 > **必看**
@@ -299,10 +309,13 @@ def setting_tab():
                 label="当前登录信息文件", value=GLOBAL_COOKIE_PATH, scale=1
             )
         with gr.Row():
-            upload_ui = gr.UploadButton(label="导入")
+            upload_ui = gr.UploadButton(label="导入Cookie文件登录", file_types=[".json"])
             add_btn = gr.Button(
-                "登录",
+                "二维码登录",
             )
+            logout_btn = gr.Button("注销当前账号")
+
+            logout_btn.click(fn=logout, inputs=None, outputs=[username_ui, gr_file_ui])
 
             upload_ui.upload(upload_file, [upload_ui], [username_ui, gr_file_ui])
 
