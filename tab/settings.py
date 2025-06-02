@@ -243,13 +243,24 @@ def on_submit_all(
 def upload_file(filepath):
     try:
         shutil.copy2(filepath, GLOBAL_COOKIE_PATH)  # 修复导入失败的bug
+        os.makedirs(os.path.dirname(GLOBAL_COOKIE_PATH), exist_ok=True)
         set_main_request(BiliRequest(cookies_config_path=GLOBAL_COOKIE_PATH))
         name = main_request.get_request_name()
         gr.Info("导入成功", duration=5)
-        yield [
-            gr.update(value=name),
-            gr.update(value=GLOBAL_COOKIE_PATH),
-        ]
+        if name != "未登录" and os.path.exists(GLOBAL_COOKIE_PATH):
+            new_cookie_filename = f"{name}_cookies.json"
+            os.makedirs(TEMP_PATH, exist_ok=True)
+            new_cookie_path = os.path.join(TEMP_PATH, new_cookie_filename)
+            shutil.copy2(GLOBAL_COOKIE_PATH, new_cookie_path)
+            yield [
+                gr.update(value=name),
+                gr.update(value=new_cookie_path),
+            ]
+        else:
+            yield [
+                gr.update(value=name),
+                gr.update(value=GLOBAL_COOKIE_PATH)
+            ]
     except Exception as e:
         name = main_request.get_request_name()
         logger.exception(e)
@@ -267,10 +278,21 @@ def add():
         main_request.cookieManager.get_cookies_str_force()
         name = main_request.get_request_name()
         gr.Info("登录成功", duration=5)
-        yield [
-            gr.update(value=name),
-            gr.update(value=GLOBAL_COOKIE_PATH),
-        ]
+        if name != "未登录" and os.path.exists(GLOBAL_COOKIE_PATH):
+            new_cookie_filename = f"{name}_cookies.json"
+            os.makedirs(TEMP_PATH, exist_ok=True)
+            new_cookie_path = os.path.join(TEMP_PATH, new_cookie_filename)
+            shutil.copy2(GLOBAL_COOKIE_PATH, new_cookie_path)
+            yield [
+                gr.update(value=name),
+                gr.update(value=new_cookie_path),
+            ]
+        else:
+            yield [
+                gr.update(value=name),
+                gr.update(value=GLOBAL_COOKIE_PATH)
+            ]
+
     except Exception:
         name = main_request.get_request_name()
         raise gr.Error("登录出现错误", duration=5)
