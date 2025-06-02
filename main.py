@@ -68,6 +68,19 @@ def main():
         help="Ntfy password (optional). For authenticated ntfy servers.",
     )
     buy_parser.add_argument(
+        "--dingtalkWebhook",
+        type=str,
+        default=os.environ.get("BTB_DINGTALK_WEBHOOK",""),
+        help="https://oapi.dingtalk.com/robot/send?access_token=xxxxx"
+    )
+    buy_parser.add_argument(
+        "--dingtalkSecret",
+        type=str,
+        default=os.environ.get("BTB_DINGTALK_SECRET", ""),
+        help="DingTalk Robot Secret (optional, for signature).",
+
+    )
+    buy_parser.add_argument(
         "--filename",
         type=str,
         default=os.environ.get("BTB_FILENAME", "default"),

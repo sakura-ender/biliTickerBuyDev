@@ -21,6 +21,8 @@ class BuyRequest(BaseModel):
     ntfy_username: str | None
     ntfy_password: str | None
     serverchanKey: str | None
+    dingtalkWebhook: str | None
+    dingtalkSecret: str | None
 
 
 current_task_thread: threading.Thread | None = None
@@ -59,6 +61,8 @@ def create_worker_app(app: FastAPI, args):
                     ntfy_username=data.ntfy_username,
                     ntfy_password=data.ntfy_password,
                     https_proxys=args.https_proxys,
+                    dingtalkWebhook=data.dingtalkWebhook,
+                    dingtalkSecret=data.dingtalkSecret,
                 ):
                     if cancel_event.is_set():
                         logger.info("任务被取消")

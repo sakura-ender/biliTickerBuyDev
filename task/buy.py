@@ -12,7 +12,7 @@ from loguru import logger
 from playsound3 import playsound
 from requests import HTTPError, RequestException
 
-from util import ERRNO_DICT, NtfyUtil, PushPlusUtil, ServerChanUtil, time_service
+from util import ERRNO_DICT, NtfyUtil, PushPlusUtil, ServerChanUtil, DingTalkUtil,time_service
 from util import bili_ticket_gt_python
 from util.BiliRequest import BiliRequest
 
@@ -41,6 +41,8 @@ def buy_stream(
         ntfy_url=None,
         ntfy_username=None,
         ntfy_password=None,
+        dingtalkWebhook=None,
+        dingtalkSecret=None,
 ):
     if bili_ticket_gt_python is None:
         yield "当前设备不支持本地过验证码，无法使用"
@@ -232,7 +234,13 @@ def buy_stream(
                         duration_minutes=5
                     )
                     yield "已启动重复通知，将每15秒发送一次提醒，持续5分钟"
-
+                if dingtalkWebhook and dingtalkSecret:
+                    DingTalkUtil.send_message(
+                        dingtalkWebhook,
+                        dingtalkSecret,
+                        "抢票成功",
+                        "前往订单中心付款吧"
+                    )
                 if audio_path:
                     playsound(audio_path)
                 break
@@ -263,6 +271,8 @@ def buy(
         ntfy_url=None,
         ntfy_username=None,
         ntfy_password=None,
+        dingtalkWebhook=None,
+        dingtalkSecret=None,
 ):
     for msg in buy_stream(
             tickets_info_str,
@@ -277,6 +287,8 @@ def buy(
             ntfy_url,
             ntfy_username,
             ntfy_password,
+            dingtalkWebhook,
+            dingtalkSecret,
     ):
         logger.info(msg)
 
@@ -296,6 +308,8 @@ def buy_new_terminal(
         ntfy_url=None,
         ntfy_username=None,
         ntfy_password=None,
+        dingtalkWebhook=None,
+        dingtalkSecret=None,
 ) -> subprocess.Popen:
     command = [sys.executable]
     if not getattr(sys, "frozen", False):
@@ -323,6 +337,10 @@ def buy_new_terminal(
         command.extend(["--ntfy_username", ntfy_username])
     if ntfy_password:
         command.extend(["--ntfy_password", ntfy_password])
+    if dingtalkWebhook:
+        command.extend(["--dingtalkWebhook", dingtalkWebhook])
+    if dingtalkSecret:
+        command.extend(["--dingtalkSecret", dingtalkSecret])
     if https_proxys:
         command.extend(["--https_proxys", https_proxys])
     command.extend(["--filename", filename])

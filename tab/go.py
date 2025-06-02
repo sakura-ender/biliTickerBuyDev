@@ -146,11 +146,27 @@ def go_tab(demo: gr.Blocks):
                 """
                 🗨️ 抢票成功提醒
                 > 你需要去对应的网站获取key或token，然后填入下面的输入框
-                > [Server酱](https://sct.ftqq.com/sendkey) | [pushplus](https://www.pushplus.plus/uc.html) | [ntfy](https://ntfy.sh/)
+                > [Server酱](https://sct.ftqq.com/sendkey) | [pushplus](https://www.pushplus.plus/uc.html) | [ntfy](https://ntfy.sh/)[钉钉机器人](https://open.dingtalk.com/document/robots/custom-robot-access)
                 > 留空以不启用提醒功能
                 """
             )
             with gr.Row():
+                dingtalk_webhook_ui = gr.Textbox(
+                    value=ConfigDB.get("dingtalkWebhook")
+                    if ConfigDB.get("dingtalkWebhook") is not None
+                    else "", 
+                    label="钉钉机器人Webhook URL", 
+                    interactive=True, 
+                    info="钉钉群机器人的Webhook地址,形如https://oapi.dingtalk.com/robot/send?access_token=xxxxx", 
+                ) 
+                dingtalk_secret_ui = gr.Textbox( 
+                    value=ConfigDB.get("dingtalkSecret") 
+                    if ConfigDB.get("dingtalkSecret") is not None 
+                    else "", 
+                    label="钉钉机器人加签Secret", 
+                    interactive=True, 
+                    info="钉钉机器人安全设置中的加签密钥", 
+                ) 
                 serverchan_ui = gr.Textbox(
                     value=ConfigDB.get("serverchanKey")
                     if ConfigDB.get("serverchanKey") is not None
@@ -232,6 +248,12 @@ def go_tab(demo: gr.Blocks):
 
                 def inner_input_ntfy_password(x):
                     return ConfigDB.insert("ntfyPassword", x)
+                
+                def inner_input_dingtalk_webhook(x):
+                    return ConfigDB.insert("dingtalkWebhook", x)
+                
+                def inner_input_dingtalk_secret(x):
+                    return ConfigDB.insert("dingtalkSecret", x)
 
                 serverchan_ui.change(fn=inner_input_serverchan, inputs=serverchan_ui)
 
@@ -242,6 +264,9 @@ def go_tab(demo: gr.Blocks):
                 ntfy_username_ui.change(fn=inner_input_ntfy_username, inputs=ntfy_username_ui)
 
                 ntfy_password_ui.change(fn=inner_input_ntfy_password, inputs=ntfy_password_ui)
+
+                dingtalk_webhook_ui.change(fn=inner_input_dingtalk_webhook, inputs=dingtalk_webhook_ui)
+                dingtalk_secret_ui.change(fn=inner_input_dingtalk_secret, inputs=dingtalk_secret_ui)
 
         def choose_option(way):
             nonlocal select_way
@@ -328,6 +353,8 @@ def go_tab(demo: gr.Blocks):
                         "ntfy_url": ConfigDB.get("ntfyUrl"),
                         "ntfy_username": ConfigDB.get("ntfyUsername"),
                         "ntfy_password": ConfigDB.get("ntfyPassword"),
+                        "dingtalkWebhook": ConfigDB.get("dingtalkWebhook"),
+                        "dingtalkSecret": ConfigDB.get("dingtalkSecret"),
                     },
                 )
                 endpoints_next_idx += 1
@@ -353,6 +380,8 @@ def go_tab(demo: gr.Blocks):
                     ntfy_url=ConfigDB.get("ntfyUrl"),
                     ntfy_username=ConfigDB.get("ntfyUsername"),
                     ntfy_password=ConfigDB.get("ntfyPassword"),
+                    dingtalkWebhook=ConfigDB.get("dingtalkWebhook"),
+                    dingtalkSecret=ConfigDB.get("dingtalkSecret"),
                     https_proxys=",".join(assigned_proxies[assigned_proxies_next_idx]),
                 )
                 assigned_proxies_next_idx += 1
@@ -407,6 +436,8 @@ def go_tab(demo: gr.Blocks):
                         "ntfy_url": ConfigDB.get("ntfyUrl"),
                         "ntfy_username": ConfigDB.get("ntfyUsername"),
                         "ntfy_password": ConfigDB.get("ntfyPassword"),
+                        "dingtalkWebhook": ConfigDB.get("dingtalkWebhook"),
+                        "dingtalkSecret": ConfigDB.get("dingtalkSecret"),
                     },
                 )
                 endpoints_next_idx += 1
@@ -432,6 +463,8 @@ def go_tab(demo: gr.Blocks):
                     ntfy_url=ConfigDB.get("ntfyUrl"),
                     ntfy_username=ConfigDB.get("ntfyUsername"),
                     ntfy_password=ConfigDB.get("ntfyPassword"),
+                    dingtalkWebhook=ConfigDB.get("dingtalkWebhook"),
+                    dingtalkSecret=ConfigDB.get("dingtalkSecret"), 
                     https_proxys=",".join(assigned_proxies[assigned_proxies_next_idx]),
                 )
                 assigned_proxies_next_idx += 1
