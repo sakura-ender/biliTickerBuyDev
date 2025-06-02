@@ -146,7 +146,7 @@ def go_tab(demo: gr.Blocks):
                 """
                 🗨️ 抢票成功提醒
                 > 你需要去对应的网站获取key或token，然后填入下面的输入框
-                > [Server酱](https://sct.ftqq.com/sendkey) | [pushplus](https://www.pushplus.plus/uc.html) | [ntfy](https://ntfy.sh/)[钉钉机器人](https://open.dingtalk.com/document/robots/custom-robot-access)
+                > [Server酱](https://sct.ftqq.com/sendkey) | [pushplus](https://www.pushplus.plus/uc.html) | [ntfy](https://ntfy.sh/) | [钉钉机器人](https://open.dingtalk.com/document/robots/custom-robot-access)
                 > 留空以不启用提醒功能
                 """
             )

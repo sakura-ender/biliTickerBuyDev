@@ -214,32 +214,33 @@ def buy_stream(
                 qr_gen.make(fit=True)
                 qr_gen_image = qr_gen.make_image()
                 qr_gen_image.show()  # type: ignore
+                notification_title = "抢票成功!"
+                notification_content = f"{tickets_info.get('detail','未知详情')},请尽快前往付款"
                 if pushplusToken:
                     PushPlusUtil.send_message(
-                        pushplusToken, "抢票成功", "前往订单中心付款吧"
+                        pushplusToken, notification_content, notification_title
                     )
                 if serverchanKey:
                     ServerChanUtil.send_message(
-                        serverchanKey, "抢票成功", "前往订单中心付款吧"
+                        serverchanKey, notification_content, notification_title
                     )
                 if ntfy_url:
                     # 使用重复通知功能，每10秒发送一次，持续5分钟
                     NtfyUtil.send_repeat_message(
                         ntfy_url,
-                        f"抢票成功，bilibili会员购，请尽快前往订单中心付款",
-                        title="Bili Ticket Payment Reminder",
+                        notification_content,
+                        title="notification_title",
                         username=ntfy_username,
                         password=ntfy_password,
                         interval_seconds=15,
                         duration_minutes=5
                     )
-                    yield "已启动重复通知，将每15秒发送一次提醒，持续5分钟"
+                    yield f"已启动重复通知，将每15秒发送一次提醒，持续5分钟。详情: {tickets_info.get('detail', '未知详情')}"
                 if dingtalkWebhook and dingtalkSecret:
                     DingTalkUtil.send_message(
                         dingtalkWebhook,
                         dingtalkSecret,
-                        "抢票成功",
-                        "前往订单中心付款吧"
+                        notification_content, notification_title
                     )
                 if audio_path:
                     playsound(audio_path)
